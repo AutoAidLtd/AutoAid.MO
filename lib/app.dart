@@ -1,55 +1,70 @@
+import 'package:autoaid/routes/router.dart';
+import 'package:autoaid/utils/button.dart';
+import 'package:autoaid/utils/map/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:here_sdk/core.dart';
+import 'package:here_sdk/core.engine.dart';
+import 'package:here_sdk/mapview.dart';
+import 'package:logger/logger.dart';
 
 class AutoAid extends StatefulWidget {
-  const AutoAid({super.key, required this.title});
-  final String title;
+  const AutoAid({super.key});
 
   @override
   State<AutoAid> createState() => _AutoAidState();
 }
 
-class _AutoAidState extends State<AutoAid> {
-  int _counter = 0;
+class _AutoAidState extends State<AutoAid> with TickerProviderStateMixin {
+    CameraExample? _cameraExample;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'Welcome to Auto Aid',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    return MaterialApp.router(
+      routerConfig: AppRouter.router,
+      theme: ThemeData(useMaterial3: true),
+      // home: Scaffold(
+      //   appBar: AppBar(
+      //     title: Text('HERE SDK - Camera Example'),
+      //   ),
+      //   body: Stack(
+      //     children: [
+      //       HereMap(onMapCreated: _onMapCreated),
+      //       Row(
+      //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      //         children: [
+      //           buttonBlue('Move', _moveButtonClicked),
+      //         ],
+      //       ),
+      //     ],
+      //   ),
+      // ),
     );
+  }
+
+  void _onMapCreated(HereMapController hereMapController) {
+    hereMapController.mapScene.loadSceneForMapScheme(MapScheme.hybridNight, (MapError? error) {
+      if (error == null) {
+        _cameraExample = CameraExample(hereMapController);
+      } else {
+        Logger().e("Map scene not loaded. MapError: $error");
+      }
+    });
+  }
+
+  void _moveButtonClicked() {
+    _cameraExample?.move();
+  }
+
+  @override
+  void dispose() {
+    _disposeHERESDK();
+    super.dispose();
+  }
+
+  void _disposeHERESDK() async {
+    // Free HERE SDK resources before the application shuts down.
+    await SDKNativeEngine.sharedInstance?.dispose();
+    SdkContext.release();
   }
 }
