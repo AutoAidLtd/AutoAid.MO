@@ -1,3 +1,5 @@
+import 'package:autoaid/pages/book_flow/garage_detail/garage_detail.dart';
+import 'package:autoaid/pages/book_flow/garage_page/garage_page.dart';
 import 'package:autoaid/pages/home_page/home_page.dart';
 import 'package:autoaid/pages/login_page/login_page.dart';
 import 'package:autoaid/pages/map/map.dart';
@@ -20,11 +22,15 @@ class AppPath {
   static const String user = '/user';
   static const String orders = '/orders';
   static const String clientSocket = '/socket';
+
+  //book service flow
+  static const String garageInfo = '/garageInfo';
+  static const String garageInfoDetail = '/garageInfoDetail';
 }
 
 class AppRouter {
   static final router = GoRouter(
-    initialLocation: AppPath.login,
+    initialLocation: AppPath.home,
     navigatorKey: RouterKeyManager.instance.rootNavigatorKey,
     routes: <RouteBase>[
       GoRoute(
@@ -54,7 +60,21 @@ class AppRouter {
             context,
             state,
           ) =>
-              LoginPage()),
+              const SignInPhonePage()),
+      GoRoute(
+          path: AppPath.garageInfo,
+          builder: (
+            context,
+            state,
+          ) =>
+              const GarageInfoPage()),
+      GoRoute(
+          path: AppPath.garageInfoDetail,
+          builder: (
+            context,
+            state,
+          ) =>
+              const GarageInfoDetail()),
       // GoRoute(
       //     path: AppPath.home,
       //     builder: (

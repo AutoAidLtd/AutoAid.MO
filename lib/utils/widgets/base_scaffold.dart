@@ -83,7 +83,7 @@ class _BaseScaffoldState extends State<BaseScaffold> {
               iconSize: 30,
               items: _bottomNavigationItemList,
               selectedItemColor: Colors.white,
-              unselectedItemColor: Colors.black,
+              unselectedItemColor: Colors.white,
               currentIndex: _selectedIndex,
               onTap: (index) => _onItemTapped(index, context),
             ),

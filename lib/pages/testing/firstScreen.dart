@@ -1,3 +1,4 @@
+import 'package:autoaid/pages/book_flow/garage_page/review_garage_page.dart';
 import 'package:autoaid/utils/button.dart';
 import 'package:autoaid/utils/map/map_settings.dart';
 import 'package:flutter/material.dart';
@@ -25,19 +26,18 @@ class _FirstScreenState extends State<FirstScreen> {
       context.push('/map');
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('First Screen'),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'First',
-            style: TextStyle(fontSize: 24.0),
-          ),
-          buttonOrange('Navigate to second', secondNavi)
-        ],
+    return Center(
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: 5,
+        itemBuilder: (BuildContext ctxt, int index) {
+          return Column(
+            children: [
+              SizedBox(height: 200),
+              ReviewGaragePage(),
+            ],
+          );
+        },
       ),
     );
   }

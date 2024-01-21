@@ -1,16 +1,21 @@
-
-
 import 'package:autoaid/app.dart';
-import 'package:autoaid/utils/button.dart';
-import 'package:autoaid/utils/map/camera.dart';
+import 'package:autoaid/dependencies.dart';
 import 'package:flutter/material.dart';
-import 'package:here_sdk/core.dart';
-import 'package:here_sdk/core.engine.dart';
-import 'package:here_sdk/core.errors.dart';
-import 'package:here_sdk/mapview.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  await _initApp();
   runApp(AutoAid());
 }
 
+Future<void> _initApp() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    name: 'auto-aid',
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await AppDependencies.initialize();
+  // await FirebaseNotification().initNotifications();
+}
