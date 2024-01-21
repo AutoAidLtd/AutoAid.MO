@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(100),
                 child: Image.network(
-                  'https://rbooks.vn/imgs/user-avt-comment.png',
+                  'https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745',
                   width: 100.0,
                   height: 100.0,
                   // fit: BoxFit.cover,
@@ -81,6 +81,13 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 squareButton('client Socket', () => context.push('/socket')),
+                squareButton('Car Garage', () {}),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                squareButton('Go to Garage', () => context.push('/garageInfo')),
                 squareButton('Car Garage', () {}),
               ],
             ),

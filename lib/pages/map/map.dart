@@ -1,6 +1,7 @@
 import 'package:autoaid/utils/button.dart';
 import 'package:autoaid/utils/map/camera.dart';
 import 'package:autoaid/utils/map/map_settings.dart';
+import 'package:autoaid/utils/socket_management/socket.dart';
 import 'package:flutter/material.dart';
 import 'package:here_sdk/core.dart';
 import 'package:here_sdk/core.engine.dart';
@@ -15,11 +16,13 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapState extends State<MapScreen> with TickerProviderStateMixin {
+  late SocketManager socketManager;
   late Future<void> initMap;
 
   @override
   void initState() {
     super.initState();
+    socketManager = SocketManager();
     initMap = MapHelper.initializeHERESDK();
   }
 
@@ -46,6 +49,7 @@ class _MapState extends State<MapScreen> with TickerProviderStateMixin {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     buttonOrange('Find Garage', _moveButtonClicked),
+                    buttonOrange('Send Request', _sendRequestSocket),
                   ],
                 ),
               ],
@@ -71,9 +75,14 @@ class _MapState extends State<MapScreen> with TickerProviderStateMixin {
     _cameraExample?.move();
   }
 
+  void _sendRequestSocket() {
+    socketManager.userSendRequest();
+  }
+
   @override
   void dispose() {
     _disposeHERESDK();
+    SocketManager().disposeSocket();
     super.dispose();
   }
 

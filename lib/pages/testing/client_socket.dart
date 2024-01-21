@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:autoaid/utils/socket_management/socket.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
@@ -14,52 +15,16 @@ class ClientSocket extends StatefulWidget {
 }
 
 class _ClientSocketState extends State<ClientSocket> {
-  final String serverUrl = 'http://10.0.2.2:4000';
-  late IO.Socket _socket;
-
+  late SocketManager socketManager;
   @override
   void initState() {
     super.initState();
-    connectToSocket();
+    socketManager = SocketManager();
   }
 
-  void connectToSocket() {
-    _socket = IO.io(
-        serverUrl,
-        OptionBuilder()
-            .setTransports(['websocket']) // for Flutter or Dart VM
-            .disableAutoConnect() // disable auto-connection
-            .setExtraHeaders({'foo': 'bar'}) // optional
-            .enableForceNewConnection()
-            .build());
-    _socket.connect();
-
-    //__Socket Connected
-    _socket.onConnect((_) {
-      Logger().t('Connected to $serverUrl completed');
-    });
-
-    //__Socket Disconnected
-    _socket.onDisconnect((_) => Logger().i('disconnect'));
-
-    //___.USER_REQUEST_HANDLED
-    _socket.on(
-      'USER_REQUEST_HANDLED',
-      (data) => {Logger().w('Server talk: $data')},
-    );
-
-    //__.GARAGE_INROOM_UPDATE_LOCATION
-  }
-
-  void sendEmerToSocket() {
-    _socket.emit('SEND_REQUEST_EMERGENT', 'Customer ID');
-  }
-
-// WIDGET DISPOSE
   @override
   void dispose() {
-    _socket.disconnect();
-    _socket.dispose();
+    SocketManager().disposeSocket();
     super.dispose();
   }
 
@@ -67,7 +32,7 @@ class _ClientSocketState extends State<ClientSocket> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flutter Buttons'),
+        title: const Text('Socket Client: User Role'),
       ),
       body: Center(
         child: Column(
@@ -80,7 +45,7 @@ class _ClientSocketState extends State<ClientSocket> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => {
-                sendEmerToSocket(),
+                socketManager.userSendRequest(),
               },
               child: const Text('Connect socket'),
             ),
