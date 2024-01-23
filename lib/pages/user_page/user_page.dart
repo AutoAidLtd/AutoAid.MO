@@ -1,7 +1,9 @@
+import 'package:autoaid/routes/router.dart';
 import 'package:autoaid/utils/button.dart';
 import 'package:autoaid/utils/palette.dart';
 import 'package:autoaid/utils/widgets/size_box.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class UserPage extends StatelessWidget {
   const UserPage({super.key});
@@ -47,28 +49,32 @@ class UserPage extends StatelessWidget {
                     BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
                 child: Column(
                   children: [
-                    UserLine(
+                    const UserLine(
                       contentText: 'Edit Profile',
                       index: 0,
                     ),
-                    UserLine(
+                    const UserLine(
                       contentText: 'Settings',
                       index: 1,
                     ),
-                    UserLine(
+                    const UserLine(
                       contentText: 'Support',
                       index: 1,
                     ),
-                    UserLine(
+                    const UserLine(
                       contentText: 'Order History',
                       index: 1,
                     ),
-                    UserLine(
+                    const UserLine(
                       contentText: 'Suscriptions',
                       index: 2,
                     ),
                     SB_HEIGHT(40),
-                    buttonGradientOrange('Log out', () => {print('hehe')})
+                    buttonGradientOrange(
+                        'Log out',
+                        () => {
+                              context.go(AppPath.login),
+                            })
                   ],
                 ),
               ),
@@ -143,7 +149,7 @@ class _UserLineState extends State<UserLine> {
               padding: const EdgeInsets.only(left: 8.0),
               child: Text(
                 widget.contentText,
-                style: TextStyle(color: Colors.black),
+                style: const TextStyle(color: Colors.black),
               ),
             ),
             Icon(

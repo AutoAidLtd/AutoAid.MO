@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../bloc/auth/auth_bloc.dart';
@@ -265,7 +266,7 @@ class _SignInPhonePageState extends State<SignInPhonePage> {
                           child: Container(
                             margin: const EdgeInsets.fromLTRB(20, 5, 20, 5),
                             child: ButtonOrange(
-                              title: 'Nhận OPT',
+                              title: 'Nhận OTP',
                               onPressed: () => sendPhoneNumber(),
                               icon: null,
                             ),
@@ -274,20 +275,20 @@ class _SignInPhonePageState extends State<SignInPhonePage> {
                         const SizedBox(height: 10),
                         const Text('Hoặc'),
                         const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            GestureDetector(
-                                onTap: onGoogleClick,
-                                child: Image.asset('assets/images/1.png')),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            GestureDetector(
-                                onTap: () {},
-                                child: Image.asset('assets/images/2.png')),
-                          ],
-                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   children: [
+                        //     GestureDetector(
+                        //         onTap: onGoogleClick,
+                        //         child: Image.asset('assets/images/1.png')),
+                        //     const SizedBox(
+                        //       width: 10,
+                        //     ),
+                        //     GestureDetector(
+                        //         onTap: () {},
+                        //         child: Image.asset('assets/images/2.png')),
+                        //   ],
+                        // ),
                         const SizedBox(height: 10),
                         // Container(
                         //   // color: Colors.red,
@@ -332,9 +333,7 @@ class _SignInPhonePageState extends State<SignInPhonePage> {
   }
 
   void sendPhoneNumber() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('role', 'Customer');
-
+    // final prefs = await SharedPreferences.getInstance();
     String phoneNumber = phoneController.text.trim();
     AuthBloc().loginWithPhone(
         context: context,
@@ -342,7 +341,7 @@ class _SignInPhonePageState extends State<SignInPhonePage> {
             "+${selectedCountry.phoneCode}${phoneNumber.substring(1)}");
   }
 
-  Future<void> onGoogleClick() async {
-    await _authBloc.loginWithGoogle();
-  }
+  // Future<void> onGoogleClick() async {
+  //   await _authBloc.loginWithGoogle();
+  // }
 }
