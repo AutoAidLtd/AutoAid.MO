@@ -127,57 +127,57 @@ class AuthBloc extends BaseCubit {
     }
   }
 
-  Future<void> loginWithGoogle() async {
-    try {
-      emit(
-        CommonState(
-          null,
-          isLoading: true,
-        ),
-      );
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+  // Future<void> loginWithGoogle() async {
+  //   try {
+  //     emit(
+  //       CommonState(
+  //         null,
+  //         isLoading: true,
+  //       ),
+  //     );
+  //     final GoogleSignIn googleSignIn = GoogleSignIn();
+  //     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
+  //     final GoogleSignInAuthentication? googleAuth =
+  //         await googleUser?.authentication;
 
-      final AuthCredential authCredential = GoogleAuthProvider.credential(
-          accessToken: googleAuth?.accessToken, idToken: googleAuth?.idToken);
+  //     final AuthCredential authCredential = GoogleAuthProvider.credential(
+  //         accessToken: googleAuth?.accessToken, idToken: googleAuth?.idToken);
 
-      final credential = await auth.signInWithCredential(authCredential);
+  //     final credential = await auth.signInWithCredential(authCredential);
 
-      var log = Logger();
-      String? idToken = await auth.currentUser?.getIdToken();
-      final prefs = await SharedPreferences.getInstance();
-      String? fcmtoken = prefs.getString('fcmToken');
+  //     var log = Logger();
+  //     String? idToken = await auth.currentUser?.getIdToken();
+  //     final prefs = await SharedPreferences.getInstance();
+  //     String? fcmtoken = prefs.getString('fcmToken');
 
-      final authRepository = AuthRepository(authApi: AuthApi());
-      var responseLogin = await authRepository.loginUser(idToken!, fcmtoken!);
+  //     final authRepository = AuthRepository(authApi: AuthApi());
+  //     // var responseLogin = await authRepository.loginUser(idToken!, fcmtoken!);
 
-      await prefs.setString('accessToken', responseLogin!.token);
-      // log.i(responseLogin!.token);
+  //     // await prefs.setString('accessToken', responseLogin!.token);
+  //     // log.i(responseLogin!.token);
 
-      emit(
-        CommonState(
-          credential,
-          isLoading: false,
-        ),
-      );
-    } catch (e) {
-      var exceptionMessage = 'Unknown Error';
+  //     emit(
+  //       CommonState(
+  //         credential,
+  //         isLoading: false,
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     var exceptionMessage = 'Unknown Error';
 
-      if (e is FirebaseAuthException) {
-        exceptionMessage = e.code;
-      }
+  //     if (e is FirebaseAuthException) {
+  //       exceptionMessage = e.code;
+  //     }
 
-      emit(
-        CommonState(
-          null,
-          errorMessage: exceptionMessage,
-        ),
-      );
-    }
-  }
+  //     emit(
+  //       CommonState(
+  //         null,
+  //         errorMessage: exceptionMessage,
+  //       ),
+  //     );
+  //   }
+  // }
 
   Future<void> loginWithPhone(
       {required BuildContext context, required String phoneNumber}) async {
@@ -188,6 +188,7 @@ class AuthBloc extends BaseCubit {
           isLoading: true,
         ),
       );
+      // Logger().i('loginWithPhone');
 
       await auth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
@@ -200,6 +201,8 @@ class AuthBloc extends BaseCubit {
           }
         },
         codeSent: (verificationId, forceResendingToken) async {
+          Logger().i('codeSent');
+
           await Navigator.push(
             context,
             MaterialPageRoute(
@@ -236,17 +239,22 @@ class AuthBloc extends BaseCubit {
       PhoneAuthCredential creds = PhoneAuthProvider.credential(
           verificationId: verificationId, smsCode: userOtp);
       var user = (await auth.signInWithCredential(creds)).user;
+      //
       if (user != null) {
-        String? idToken = await auth.currentUser?.getIdToken();
-        final prefs = await SharedPreferences.getInstance();
-        String? fcmtoken = prefs.getString('fcmToken');
-        Logger log = Logger();
-        log.i('idToken: $idToken');
-        log.i('fcmToken: $fcmtoken');
+        User? currentUser = auth.currentUser;
+        String? idToken = await currentUser?.getIdToken();
+        String? uID = currentUser?.uid;
 
-        // final authRepository = AuthRepository(authApi: AuthApi());
-        // responseLogin =
-        //     await authRepository.loginUser(idToken!, fcmtoken!, role);
+        Logger log = Logger();
+        // log.i('Hello UID: $uID');
+        // log.i('Hello idToken: $idToken');
+
+        final authRepository = AuthRepository(authApi: AuthApi());
+        responseLogin = await authRepository.loginUserGET(uID!);
+
+        final prefs = await SharedPreferences.getInstance();
+
+        // log.i('STRING RETURN $responseLogin');
 
         // await prefs.setString(
         //     'userData', jsonEncode(responseLogin.user.toJson()));
@@ -270,12 +278,12 @@ class AuthBloc extends BaseCubit {
         // onSuccess(responseLogin.user.roleName, responseLogin.isFirstTime);
         onSuccess();
       }
-      // emit(
-      //   CommonState(
-      //     responseLogin,
-      //     isLoading: false,
-      //   ),
-      // );
+      emit(
+        CommonState(
+          responseLogin,
+          isLoading: false,
+        ),
+      );
     } on FirebaseAuthException catch (e) {
       showSnackBar(context, e.message.toString());
     }

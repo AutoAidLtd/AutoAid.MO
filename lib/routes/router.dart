@@ -30,7 +30,7 @@ class AppPath {
 
 class AppRouter {
   static final router = GoRouter(
-    initialLocation: AppPath.home,
+    initialLocation: AppPath.login,
     navigatorKey: RouterKeyManager.instance.rootNavigatorKey,
     routes: <RouteBase>[
       GoRoute(
