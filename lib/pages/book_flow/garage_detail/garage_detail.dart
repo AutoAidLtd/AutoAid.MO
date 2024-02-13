@@ -44,18 +44,19 @@ class _GarageInfoDetailState extends State<GarageInfoDetail> {
               bottom: 25.0,
             ),
             child: containerBoxShadow(
-                250,
-                30,
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    textB('Services', 30),
-                    textN('Email', 20),
-                    textN('Phone number', 20),
-                    textN('Address', 20),
-                    textN('Detail', 20),
-                  ],
-                )),
+              250,
+              30,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  textB('Services', 30),
+                  textN('Email', 20),
+                  textN('Phone number', 20),
+                  textN('Address', 20),
+                  textN('Detail', 20),
+                ],
+              ),
+            ),
           )
         ],
       ),

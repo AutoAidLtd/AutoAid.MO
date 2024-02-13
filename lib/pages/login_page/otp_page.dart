@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:autoaid/routes/router.dart';
 import 'package:autoaid/utils/button.dart';
+import 'package:autoaid/utils/socket_management/socket.dart';
 import 'package:autoaid/utils/tools.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ class OtpScreen extends StatefulWidget {
 class _OtpScreenState extends State<OtpScreen> {
   String? otpCode;
   final AuthBloc _authBloc = AuthBloc();
+  late SocketManager socketManager;
 
   @override
   Widget build(BuildContext context) {
@@ -242,37 +244,17 @@ class _OtpScreenState extends State<OtpScreen> {
     );
   }
 
-  // verify otp
   Future<void> verifyOtp(BuildContext context, String userOtp) async {
-    final prefs = await SharedPreferences.getInstance();
-    var role = prefs.getString('role');
-
     await AuthBloc().verifyOtp(
       context: context,
       verificationId: widget.verificationId,
       userOtp: userOtp,
-      // onSuccess: (role, isFirstTime) {
-      //   Logger().i('role: $role, isFirstTime: $isFirstTime');
-      //   var wheretogo =
-      //       role == 'Customer' ? AppPath.home : AppPath.firstScreen;
-      //   if (role == 'Customer') {
-      //     context.go(
-      //       wheretogo,
-      //     );
-      //   } else {
-      //     if (isFirstTime == true) {
-      //       print('createKitchen');
-      //     } else {
-      //       context.go(
-      //         wheretogo,
-      //       );
-      //     }
-      //   }
-      // },
-      role: role ?? 'Customer',
-      onSuccess: () => {
-        context.go(AppPath.home),
-      },
+      onSuccess: onSuccessOTP,
     );
+  }
+
+  void onSuccessOTP() {
+    // if (!context.mounted) return;
+    context.go(AppPath.home);
   }
 }

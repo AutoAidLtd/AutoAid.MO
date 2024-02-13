@@ -1,8 +1,10 @@
 import 'package:autoaid/utils/button.dart';
 import 'package:autoaid/utils/map/camera.dart';
 import 'package:autoaid/utils/map/map_settings.dart';
+import 'package:autoaid/utils/socket_management/routing_map.dart';
 import 'package:autoaid/utils/socket_management/socket.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:here_sdk/core.dart';
 import 'package:here_sdk/core.engine.dart';
 import 'package:here_sdk/mapview.dart';
@@ -16,23 +18,33 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapState extends State<MapScreen> with TickerProviderStateMixin {
-  late SocketManager socketManager;
   late Future<void> initMap;
+  CameraExample? _cameraExample;
+  RoutingExample? _routingManager;
+  // final HOME_GEO_COORDINATES = GeoCoordinates(10.7845766, 106.6212572);
 
   @override
   void initState() {
     super.initState();
-    socketManager = SocketManager();
     initMap = MapHelper.initializeHERESDK();
   }
-
-  CameraExample? _cameraExample;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Find Garage'),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.arrow_back_rounded),
+              onPressed: () {
+                context.push('/home');
+              },
+              // tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            );
+          },
+        ),
+        title: Text('Create Route'),
       ),
       body: FutureBuilder(
         future: initMap,
@@ -48,8 +60,8 @@ class _MapState extends State<MapScreen> with TickerProviderStateMixin {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    buttonOrange('Find Garage', _moveButtonClicked),
-                    buttonOrange('Send Request', _sendRequestSocket),
+                    buttonOrange('Find Garage', _addRouteButtonClicked),
+                    buttonOrange('Send Request', _clearMapButtonClicked),
                   ],
                 ),
               ],
@@ -61,9 +73,10 @@ class _MapState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   void _onMapCreated(HereMapController hereMapController) {
-    hereMapController.mapScene.loadSceneForMapScheme(MapScheme.hybridNight,
+    hereMapController.mapScene.loadSceneForMapScheme(MapScheme.normalDay,
         (MapError? error) {
       if (error == null) {
+        _routingManager = RoutingExample(_showDialog, hereMapController);
         _cameraExample = CameraExample(hereMapController);
       } else {
         Logger().e("Map scene not loaded. MapError: $error");
@@ -75,20 +88,51 @@ class _MapState extends State<MapScreen> with TickerProviderStateMixin {
     _cameraExample?.move();
   }
 
-  void _sendRequestSocket() {
-    socketManager.userSendRequest();
+  void _addRouteButtonClicked() {
+    _routingManager?.addRoute(GeoCoordinates(10.7845766, 106.6212572),
+        GeoCoordinates(10.7842575, 106.616255));
   }
+
+  void _clearMapButtonClicked() {
+    _routingManager?.clearMap();
+  }
+
+  // void _sendRequestSocket() {
+  //   socketManager.userSendRequest();
+  // }
 
   @override
   void dispose() {
-    _disposeHERESDK();
-    SocketManager().disposeSocket();
+    // Free HERE SDK resources before the application shuts down.
+    SDKNativeEngine.sharedInstance?.dispose();
+    SdkContext.release();
     super.dispose();
   }
 
-  void _disposeHERESDK() async {
-    // Free HERE SDK resources before the application shuts down.
-    await SDKNativeEngine.sharedInstance?.dispose();
-    SdkContext.release();
+  Future<void> _showDialog(String title, String message) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(message),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

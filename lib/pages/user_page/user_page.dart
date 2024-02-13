@@ -1,19 +1,38 @@
 import 'package:autoaid/routes/router.dart';
 import 'package:autoaid/utils/button.dart';
 import 'package:autoaid/utils/palette.dart';
+import 'package:autoaid/utils/socket_management/socket.dart';
 import 'package:autoaid/utils/widgets/size_box.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:autoaid/utils/socket_management/socket.dart';
 
-class UserPage extends StatelessWidget {
+class UserPage extends StatefulWidget {
   const UserPage({super.key});
+
+  @override
+  State<UserPage> createState() => _UserPageState();
+}
+
+class _UserPageState extends State<UserPage> {
   final double coverHeight = 200.0;
+
   final double profileHeight = 180.0;
+
   final String urlProfileImage =
       'https://bucksfire.gov.uk/wp-content/uploads/2020/04/Biker-down.jpg';
+  late SocketManager socketManager;
+
+  @override
+  void initState() {
+    socketManager = SocketManager()..setContext(context);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    late SocketManager socketManager;
     final top = coverHeight - profileHeight / 2;
     return Scaffold(
       body: ListView(padding: EdgeInsets.zero, children: [
@@ -71,10 +90,21 @@ class UserPage extends StatelessWidget {
                     ),
                     SB_HEIGHT(40),
                     buttonGradientOrange(
-                        'Log out',
-                        () => {
-                              context.go(AppPath.login),
-                            })
+                      'Log out',
+                      () async {
+                        final prefs = await SharedPreferences.getInstance();
+
+                        // dispose socket
+                        SocketManager().disposeSocket();
+
+                        // remove aToken SharedPreferences
+                        prefs.remove('aToken');
+
+                        // log out
+                        if (!context.mounted) return;
+                        context.go(AppPath.login);
+                      },
+                    )
                   ],
                 ),
               ),

@@ -15,3 +15,12 @@ const gradientOrangeLR = LinearGradient(
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
 );
+
+const gradientOrangeTB = LinearGradient(
+  colors: [
+    Color(0xFFF26419),
+    Color(0xFFF6A02D),
+  ],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);

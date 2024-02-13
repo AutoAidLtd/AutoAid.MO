@@ -2,6 +2,7 @@ import 'package:autoaid/pages/book_flow/garage_detail/garage_detail.dart';
 import 'package:autoaid/pages/book_flow/garage_page/garage_page.dart';
 import 'package:autoaid/pages/home_page/home_page.dart';
 import 'package:autoaid/pages/login_page/login_page.dart';
+import 'package:autoaid/pages/map/emer_booking.dart';
 import 'package:autoaid/pages/map/map.dart';
 import 'package:autoaid/pages/orders_page/orders_page.dart';
 import 'package:autoaid/pages/testing/client_socket.dart';
@@ -26,11 +27,12 @@ class AppPath {
   //book service flow
   static const String garageInfo = '/garageInfo';
   static const String garageInfoDetail = '/garageInfoDetail';
+  static const String emergencyBooking = '/emergencyBooking';
 }
 
 class AppRouter {
   static final router = GoRouter(
-    initialLocation: AppPath.login,
+    initialLocation: AppPath.home,
     navigatorKey: RouterKeyManager.instance.rootNavigatorKey,
     routes: <RouteBase>[
       GoRoute(
@@ -75,13 +77,13 @@ class AppRouter {
             state,
           ) =>
               const GarageInfoDetail()),
-      // GoRoute(
-      //     path: AppPath.home,
-      //     builder: (
-      //       context,
-      //       state,
-      //     ) =>
-      //         const HomePage()),
+      GoRoute(
+          path: AppPath.emergencyBooking,
+          builder: (
+            context,
+            state,
+          ) =>
+              const EmergencyBookingScreen()),
       ShellRoute(
         navigatorKey: RouterKeyManager.instance.shellNavigatorKey,
         builder: (context, state, child) {

@@ -67,7 +67,8 @@ Align buttonGradientOrange(String title, Function callbackFunction) => Align(
           width: 200.0, // Điều chỉnh kích thước nút theo ý muốn
           height: 50.0,
           decoration: BoxDecoration(
-            gradient: gradientOrange(0),
+            // gradient: gradientOrange(0),
+            gradient: gradientOrangeLR,
             borderRadius:
                 BorderRadius.circular(25.0), // Điều chỉnh bo tròn theo ý muốn
           ),
