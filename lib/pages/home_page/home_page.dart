@@ -1,4 +1,6 @@
 import 'package:autoaid/utils/button.dart';
+import 'package:autoaid/utils/socket_management/socket.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -10,6 +12,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late SocketManager socketManager;
+  @override
+  void initState() {
+    // socketManager = SocketManager()..setContext(context);
+    super.initState();
+  }
+
   int _selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -73,22 +82,17 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                squareButton('Emergency', () => context.push('/map')),
-                squareButton('Motorbike Garage', () {}),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                squareButton('client Socket', () => context.push('/socket')),
-                squareButton('Car Garage', () {}),
+                squareButton('Emergency', () => context.go('/map')),
+                squareButton('User Send Request', () {
+                  // SocketManager().userSendRequest();
+                }),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 squareButton('Go to Garage', () => context.push('/garageInfo')),
-                squareButton('Car Garage', () {}),
+                squareButton('Test API', () => testDioApi()),
               ],
             ),
             Container(
@@ -102,6 +106,13 @@ class _HomePageState extends State<HomePage> {
         )
       ]),
     );
+  }
+
+  void testDioApi() async {
+    final dio = Dio();
+    print('button press');
+    final res = await dio.get('http://192.168.56.1:5246/weatherforecast');
+    print(res);
   }
 
   void _onItemTapped(int index) {

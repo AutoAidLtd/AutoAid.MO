@@ -37,96 +37,6 @@ class AuthBloc extends BaseCubit {
     return errorMessage;
   }
 
-  Future<void> signUp({
-    required String email,
-    required String password,
-    required String confirmPassword,
-  }) async {
-    try {
-      emit(
-        CommonState(
-          null,
-          isLoading: true,
-        ),
-      );
-      final validateMessage = getValidateConfirmPassword(
-        email: email,
-        password: password,
-        confirmPassword: confirmPassword,
-      );
-      if (validateMessage.isEmpty) {
-        final userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        emit(
-          CommonState(
-            userCredential,
-            isLoading: false,
-          ),
-        );
-      }
-      emit(
-        CommonState(
-          null,
-          errorMessage: validateMessage,
-        ),
-      );
-    } catch (e) {
-      var exceptionMessage = 'Unknown Error';
-
-      if (e is FirebaseAuthException) {
-        exceptionMessage = e.code;
-      }
-
-      emit(
-        CommonState(
-          null,
-          errorMessage: exceptionMessage,
-        ),
-      );
-    }
-  }
-
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      emit(
-        CommonState(
-          null,
-          isLoading: true,
-        ),
-      );
-      final userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      emit(
-        CommonState(
-          userCredential,
-          isLoading: false,
-        ),
-      );
-    } catch (e) {
-      var exceptionMessage = 'Unknown Error';
-
-      if (e is FirebaseAuthException) {
-        exceptionMessage = e.code;
-      }
-
-      emit(
-        CommonState(
-          null,
-          errorMessage: exceptionMessage,
-        ),
-      );
-    }
-  }
-
   // Future<void> loginWithGoogle() async {
   //   try {
   //     emit(
@@ -226,7 +136,7 @@ class AuthBloc extends BaseCubit {
     required String verificationId,
     required String userOtp,
     required Function onSuccess,
-    required String role,
+    // required String role,
   }) async {
     emit(
       CommonState(
@@ -235,47 +145,25 @@ class AuthBloc extends BaseCubit {
       ),
     );
     try {
-      var responseLogin;
+      String? responseLogin;
       PhoneAuthCredential creds = PhoneAuthProvider.credential(
           verificationId: verificationId, smsCode: userOtp);
       var user = (await auth.signInWithCredential(creds)).user;
       //
       if (user != null) {
         User? currentUser = auth.currentUser;
-        String? idToken = await currentUser?.getIdToken();
+        // String? idToken = await currentUser?.getIdToken();
         String? uID = currentUser?.uid;
-
-        Logger log = Logger();
-        // log.i('Hello UID: $uID');
-        // log.i('Hello idToken: $idToken');
+        Logger().i(uID);
 
         final authRepository = AuthRepository(authApi: AuthApi());
         responseLogin = await authRepository.loginUserGET(uID!);
+        Logger().i(responseLogin);
 
+        //SharedPreferences
         final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('aToken', responseLogin!);
 
-        // log.i('STRING RETURN $responseLogin');
-
-        // await prefs.setString(
-        //     'userData', jsonEncode(responseLogin.user.toJson()));
-
-        // final userApi = UserApi();
-        // var user = await userApi.getUserInfo();
-        // if (user?.roleName == "Kitchen") {
-        //   await prefs.setString(
-        //     'kitchenId',
-        //     user?.kitchenId ?? '',
-        //   );
-        //   Logger().i('kitchenId: ${user?.kitchenId}');
-        // } else if (user?.roleName == 'Customer') {
-        //   await prefs.setString(
-        //     'customerId',
-        //     user?.customerId ?? '',
-        //   );
-        //   Logger().i('customerId: ${user?.customerId}');
-        // }
-        // await prefs.setString('accessToken', responseLogin.token);
-        // onSuccess(responseLogin.user.roleName, responseLogin.isFirstTime);
         onSuccess();
       }
       emit(
@@ -289,27 +177,27 @@ class AuthBloc extends BaseCubit {
     }
   }
 
-  Future<void> signOut() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('accessToken', '');
-      await FirebaseAuth.instance.signOut();
-    } catch (e) {
-      print('Lỗi đăng xuất: $e');
-    }
-  }
+  // Future<void> signOut() async {
+  //   try {
+  //     final prefs = await SharedPreferences.getInstance();
+  //     await prefs.setString('accessToken', '');
+  //     await FirebaseAuth.instance.signOut();
+  //   } catch (e) {
+  //     print('Lỗi đăng xuất: $e');
+  //   }
+  // }
 
-  Future<void> signOutWithGoogle() async {
-    try {
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('accessToken', '');
-      await prefs.setString('userId', '');
-      await prefs.setString('userInfo', '');
-      await FirebaseAuth.instance.signOut();
-      await googleSignIn.signOut();
-    } catch (e) {
-      print('Lỗi đăng xuất Google: $e');
-    }
-  }
+  // Future<void> signOutWithGoogle() async {
+  //   try {
+  //     final GoogleSignIn googleSignIn = GoogleSignIn();
+  //     final prefs = await SharedPreferences.getInstance();
+  //     await prefs.setString('accessToken', '');
+  //     await prefs.setString('userId', '');
+  //     await prefs.setString('userInfo', '');
+  //     await FirebaseAuth.instance.signOut();
+  //     await googleSignIn.signOut();
+  //   } catch (e) {
+  //     print('Lỗi đăng xuất Google: $e');
+  //   }
+  // }
 }

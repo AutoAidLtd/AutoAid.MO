@@ -1,4 +1,7 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
     "editor.formatOnSave": true
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#FFFFFF"
+    }
 }

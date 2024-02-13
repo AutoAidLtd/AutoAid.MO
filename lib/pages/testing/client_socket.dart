@@ -15,17 +15,9 @@ class ClientSocket extends StatefulWidget {
 }
 
 class _ClientSocketState extends State<ClientSocket> {
-  late SocketManager socketManager;
   @override
   void initState() {
     super.initState();
-    socketManager = SocketManager();
-  }
-
-  @override
-  void dispose() {
-    SocketManager().disposeSocket();
-    super.dispose();
   }
 
   @override
@@ -44,9 +36,7 @@ class _ClientSocketState extends State<ClientSocket> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => {
-                socketManager.userSendRequest(),
-              },
+              onPressed: () => {},
               child: const Text('Connect socket'),
             ),
           ],
