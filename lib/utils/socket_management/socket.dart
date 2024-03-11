@@ -1,3 +1,4 @@
+import 'package:autoaid/models/approve_response.dart';
 import 'package:autoaid/models/sendEmerModel.dart';
 import 'package:autoaid/utils/socket_management/socket_enum.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 
 class SocketManager {
-  final String serverUrl = 'http://10.0.2.2:4000';
+  final String serverUrl = 'https://autoaid.wyvernp.id.vn';
   late IO.Socket _socket;
   static SocketManager? _instance;
   late BuildContext _context;
@@ -57,7 +58,8 @@ class SocketManager {
     //__ SAU KHI GARAGE APPROVE REQUEST, PUSH VÀO 1 ROOM bất kì
     _socket.on(EmergentUserReceiveEvent.garageApproveRequest, (data) {
       Logger().w('Data from Server(garageApproveRequest): $data');
-      _context.push('/map');
+      _context.push('/emergencyDetail',
+          extra: ApproveResponeDto.fromJson(data));
     });
   }
 
@@ -68,15 +70,10 @@ class SocketManager {
   }
 
   //__1
-  void userSendRequest() {
-    sendEmergentDTO emergentRequest = sendEmergentDTO(
-      location: Location(lat: 10.8698289, lng: 106.7780165),
-      vehicle: Vehicle(verhicleNo: "ABC123", type: "CAR", brand: "Toyota"),
-      remark: "Emergency!",
-      createTimestamp: DateTime.now(),
-    );
+  void userSendRequest(SendEmergentDTO emergentRequest) {
     _socket.emit(
         EmergentUserEmitEvent.userSendRequest, emergentRequest.toJson());
+    _context.go('/home');
   }
 
   void userUpdateLocation() {

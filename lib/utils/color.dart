@@ -7,3 +7,6 @@ Color? gradientOrange(double fraction) {
     fraction,
   );
 }
+
+const kPrimaryColor = Color(0xFFF26419);
+const kPrimaryLightColor = Color(0xFFF6A02D);

@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 class GarageInfoDetail extends StatefulWidget {
   const GarageInfoDetail({
     super.key,
+    // this.idGarage,
   });
+  // final String? idGarage;
 
   @override
   State<GarageInfoDetail> createState() => _GarageInfoDetailState();

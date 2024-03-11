@@ -4,28 +4,28 @@
 
 import 'dart:convert';
 
-sendEmergentDTO sendEmergentDTOFromJson(String str) =>
-    sendEmergentDTO.fromJson(json.decode(str));
+SendEmergentDTO sendEmergentDTOFromJson(String str) =>
+    SendEmergentDTO.fromJson(json.decode(str));
 
-String sendEmergentDTOToJson(sendEmergentDTO data) =>
+String sendEmergentDTOToJson(SendEmergentDTO data) =>
     json.encode(data.toJson());
 
-class sendEmergentDTO {
-  Location location;
+class SendEmergentDTO {
+  LocationVariable location;
   String remark;
   DateTime createTimestamp;
   Vehicle vehicle;
 
-  sendEmergentDTO({
+  SendEmergentDTO({
     required this.location,
     required this.remark,
     required this.createTimestamp,
     required this.vehicle,
   });
 
-  factory sendEmergentDTO.fromJson(Map<String, dynamic> json) =>
-      sendEmergentDTO(
-        location: Location.fromJson(json["location"]),
+  factory SendEmergentDTO.fromJson(Map<String, dynamic> json) =>
+      SendEmergentDTO(
+        location: LocationVariable.fromJson(json["location"]),
         remark: json["remark"],
         createTimestamp: DateTime.parse(json["create_timestamp"]),
         vehicle: Vehicle.fromJson(json["vehicle"]),
@@ -39,16 +39,17 @@ class sendEmergentDTO {
       };
 }
 
-class Location {
+class LocationVariable {
   double lat;
   double lng;
 
-  Location({
+  LocationVariable({
     required this.lat,
     required this.lng,
   });
 
-  factory Location.fromJson(Map<String, dynamic> json) => Location(
+  factory LocationVariable.fromJson(Map<String, dynamic> json) =>
+      LocationVariable(
         lat: json["lat"]?.toDouble(),
         lng: json["lng"]?.toDouble(),
       );

@@ -29,27 +29,28 @@ class CameraExample {
   final double distanceToEarthInMeters = 5000;
   MapPolygon? centerMapCircle;
 
-  CameraExample(HereMapController hereMapController) : _hereMapController = hereMapController {
-    // Set initial map center to a location in Berlin.
-    GeoCoordinates mapCenter = GeoCoordinates(52.530932, 13.384915);
-    MapMeasure mapMeasureZoom = MapMeasure(MapMeasureKind.distance, distanceToEarthInMeters);
-    _hereMapController.camera.lookAtPointWithMeasure(mapCenter, mapMeasureZoom);
+  CameraExample(HereMapController hereMapController, GeoCoordinates test)
+      : _hereMapController = hereMapController {
+    GeoCoordinates mapCenter = GeoCoordinates(10.8028696, 106.6108742);
+    MapMeasure mapMeasureZoom =
+        MapMeasure(MapMeasureKind.distance, distanceToEarthInMeters);
+    _hereMapController.camera.lookAtPointWithMeasure(
+        GeoCoordinates(10.8028696, 106.6108742), mapMeasureZoom);
   }
 
   void move() {
-    GeoCoordinates newTarget = _createRandomGeoCoordinatesNearby();
-
-    // Indicate the new map center with a circle.
+    // GeoCoordinates newTarget = _createRandomGeoCoordinatesNearby();
+    GeoCoordinates newTarget = GeoCoordinates(10.8028746, 106.6108648);
     _setNewMapCircle(newTarget);
-
     _flyTo(newTarget);
   }
 
   void _flyTo(GeoCoordinates geoCoordinates) {
-    GeoCoordinatesUpdate geoCoordinatesUpdate = GeoCoordinatesUpdate.fromGeoCoordinates(geoCoordinates);
+    GeoCoordinatesUpdate geoCoordinatesUpdate =
+        GeoCoordinatesUpdate.fromGeoCoordinates(geoCoordinates);
     double bowFactor = 1;
-    MapCameraAnimation animation =
-        MapCameraAnimationFactory.flyTo(geoCoordinatesUpdate, bowFactor, Duration(seconds: 3));
+    MapCameraAnimation animation = MapCameraAnimationFactory.flyTo(
+        geoCoordinatesUpdate, bowFactor, Duration(seconds: 3));
     _hereMapController.camera.startAnimation(animation);
   }
 
@@ -76,7 +77,7 @@ class CameraExample {
     GeoBox? geoBox = _hereMapController.camera.boundingBox;
     if (geoBox == null) {
       // Happens only when map is not fully covering the viewport.
-      return GeoCoordinates(52.530932, 13.384915);
+      return GeoCoordinates(10.8028696, 106.6108742);
     }
 
     GeoCoordinates northEast = geoBox.northEastCorner;
